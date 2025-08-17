@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Tetris</title>
+	<link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+    <h1>Игра "Тетрис"</h1>
+    <div class="content">
+        <div class="buttonAll">
+            <button class="button slow green" data-speed="180" type="button">slow</button>
+            <button class="button medium red" data-speed="120" type="button">medium</button>
+            <button class="button fast red" data-speed="60" type="button">fast</button>
+        </div>
+        <div class="game">
+            <canvas id="game">HTML5 не поддерживается</canvas>
+        </div>
+        <div class="resultRecordRulers">
+            <div class="check">
+              <div class="checkYou checkClass">
+                <div id="checkYou" class="field">now</div>
+                <div class="field">:</div>
+                <div id="check" class="checkResult field">0</div>
+              </div>
+              <div class="record">
+                <div class="slow checkClass">
+                    <div class="field">highscore</div>
+                    <div class="field">:</div>
+                    <div class="resultRecord field" id="record">0</div>
+                </div>
+                <div class="count checkClass">
+                    <div class="field">count</div>
+                    <div class="field">:</div>
+                    <div class="resultRecord field" id="count">1</div>
+                </div>
+              </div>
+            </div>
+            <div class="buttonPause">
+              <button class="pause buttonStop" type="button">pause</button> 
+              <button class="go buttonStop hidden" type="button">go</button> 
+            </div>
+            <div class="rules">
+              <h2>Правила:</h2>
+              <div>
+                <p>Задача игрока - собрать змейкой максимальное количество яблок.</p>
+                <p>Змейка умирает если врезается сама в себя.</p>
+                <p>Змейка имеет 3 настройки скорости slow, middle, fast.</p>
+                <p>Если текущий рейтинг превысил рекордную отметку баллов - таблица рекордов обновиться когда змейка погибнет.</p>
+                <p>count - счетчик попыток побить рекорд после последнего раза.</p>
+              </div>
+            </div>
+            <button class="recordReset buttonStop" type="button">highscore reset</button>
+          </div>
+        </div>
+        <script src="src/js/index.js"></script>
+    </div>
+</body>
+</html>
