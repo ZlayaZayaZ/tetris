@@ -1,10 +1,17 @@
 // получаем доступ к холсту
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
+
+// получаем доступ к следующей фигуре
+const next = document.getElementById('next');
+const contextNext = next.getContext('2d');
+
+const check = document.getElementById('check');
 // размер квадратика
 const grid = 32;
 // массив с последовательностями фигур, на старте — пустой
 let tetrominoSequence = [];
+let tetrominoColorsList = [];
 
 // с помощью двумерного массива следим за тем, что находится в каждой клетке игрового поля
 // размер поля — 10 на 20, и несколько строк ещё находится за видимой областью
@@ -25,54 +32,51 @@ const tetrominos = {
     [0,0,0,0],
     [1,1,1,1],
     [0,0,0,0],
-    [0,0,0,0]
+    [0,0,0,0],
   ],
   'J': [
-    [1,0,0],
-    [1,1,1],
-    [0,0,0],
+    [0,0,0,0],
+    [0,1,0,0],
+    [0,1,1,1],
+    [0,0,0,0],
   ],
   'L': [
-    [0,0,1],
-    [1,1,1],
-    [0,0,0],
+    [0,0,0,0],
+    [0,0,1,0],
+    [1,1,1,0],
+    [0,0,0,0],
   ],
   'O': [
-    [1,1],
-    [1,1],
+    [0,0,0,0],
+    [0,1,1,0],
+    [0,1,1,0],
+    [0,0,0,0],
   ],
   'S': [
-    [0,1,1],
-    [1,1,0],
-    [0,0,0],
+    [0,0,0,0],
+    [0,0,1,1],
+    [0,1,1,0],
+    [0,0,0,0],
   ],
   'Z': [
-    [1,1,0],
-    [0,1,1],
-    [0,0,0],
+    [0,0,0,0],
+    [1,1,0,0],
+    [0,1,1,0],
+    [0,0,0,0],
   ],
   'T': [
-    [0,1,0],
-    [1,1,1],
-    [0,0,0],
+    [0,0,0,0],
+    [0,0,1,0],
+    [0,1,1,1],
+    [0,0,0,0],
   ]
-};
-
-// цвет каждой фигуры
-const colors = {
-  'I': 'cyan',
-  'O': 'yellow',
-  'T': 'purple',
-  'S': 'green',
-  'Z': 'red',
-  'J': 'blue',
-  'L': 'orange'
 };
 
 // счётчик
 let count = 0;
 // текущая фигура в игре
 let tetromino = getNextTetromino();
+
 // следим за кадрами анимации, чтобы если что — остановить игру
 let rAF = null;  
 // флаг конца игры, на старте — неактивный
@@ -84,6 +88,19 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
 
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// создаём последовательность цветов, которая появится в игре
+function generateColorsList () {
+  const colorsList = ['cyan', 'yellow', 'purple', 'green', 'red', 'blue', 'orange'];
+  while (colorsList.length) {
+    // случайным образом берем цвет
+    const rand = getRandomInt(0, colorsList.length - 1);
+    const name = colorsList.splice(rand, 1)[0];
+    // помещаем цвет в игровой массив с последовательностями
+    tetrominoColorsList.push(name);
+  }
+
 }
 
 // создаём последовательность фигур, которая появится в игре
@@ -101,10 +118,12 @@ function generateSequence() {
 }
 
 // получаем следующую фигуру
-function getNextTetromino() {
+function getNextTetromino() { 
   // если следующей нет — генерируем
   if (tetrominoSequence.length === 0) {
     generateSequence();
+    tetrominoColorsList = [];
+    generateColorsList();
   }
   // берём первую фигуру из массива
   const name = tetrominoSequence.pop();
@@ -115,14 +134,17 @@ function getNextTetromino() {
   const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
 
   // I начинает с 21 строки (смещение -1), а все остальные — со строки 22 (смещение -2)
-  const row = name === 'I' ? -1 : -2;
+  // const row = name === 'I' ? -1 : -2;
+  const row = -1;
 
+  const color = tetrominoColorsList[tetrominoSequence.length-1];
   // вот что возвращает функция 
   return {
     name: name,      // название фигуры (L, O, и т.д.)
     matrix: matrix,  // матрица с фигурой
     row: row,        // текущая строка (фигуры стартуют за видимой областью холста)
-    col: col         // текущий столбец
+    col: col,         // текущий столбец
+    color: color   // цвет данной фигуры
   };
 }
 
@@ -171,7 +193,10 @@ function placeTetromino() {
           return showGameOver();
         }
         // если всё в порядке, то записываем в массив игрового поля нашу фигуру
-        playfield[tetromino.row + row][tetromino.col + col] = tetromino.name;
+        playfield[tetromino.row + row][tetromino.col + col] = {
+          name: tetromino.name,
+          color: tetromino.color
+        };
       }
     } 
   }
@@ -187,6 +212,7 @@ function placeTetromino() {
           playfield[r][c] = playfield[r-1][c];
         }
       }
+      check.textContent = Number(check.textContent) + 10;
     }
     else {
       // переходим к следующему ряду
@@ -270,9 +296,8 @@ function loop() {
   // рисуем игровое поле с учётом заполненных фигур
   for (let row = 0; row < 20; row++) {
     for (let col = 0; col < 10; col++) {
-      if (playfield[row][col]) {
-        const name = playfield[row][col];
-        context.fillStyle = colors[name];
+      if (playfield[row][col].name) {
+        context.fillStyle = playfield[row][col].color;
 
         // рисуем всё на один пиксель меньше, чтобы получился эффект «в клетку»
         context.fillRect(col * grid, row * grid, grid-1, grid-1);
@@ -280,6 +305,17 @@ function loop() {
     }
   }
 
+  contextNext.clearRect(0,0,next.width,next.height);
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (playfield[row][col]) {
+
+        // рисуем всё на один пиксель меньше, чтобы получился эффект «в клетку»
+        contextNext.fillRect(col * grid, row * grid, grid-1, grid-1);
+      }
+    }
+  }
   // рисуем текущую фигуру
   if (tetromino) {
 
@@ -294,9 +330,9 @@ function loop() {
         placeTetromino();
       }
     }
-
+    // let color = getNextColors();
     // не забываем про цвет текущей фигуры
-    context.fillStyle = colors[tetromino.name];
+    context.fillStyle = tetromino.color;
 
     // отрисовываем её
     for (let row = 0; row < tetromino.matrix.length; row++) {

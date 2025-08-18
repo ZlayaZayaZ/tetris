@@ -12,5 +12,5 @@ html, body {
   /*толщина холста — 1 пиксель, белый цвет*/
   canvas {
     border: 1px solid white;
-    background: rgb(224, 194, 194);
+    background: black;
   }
