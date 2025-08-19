@@ -297,6 +297,7 @@ function showGameOver() {
   if (Number(record.textContent) < checkNumber) {
     record.textContent = checkNumber;
     localStorage.setItem("record", checkNumber);
+    check.textContent = 0;
   }
 }
 
