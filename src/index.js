@@ -22,7 +22,7 @@ for (let row = -2; row < 20; row++) {
   playfield[row] = [];
 
   for (let col = 0; col < 10; col++) {
-    playfield[row][col] = 0;
+    playfield[row][col] = { name: 0, color: ''};
   }
 }
 
@@ -72,11 +72,13 @@ const tetrominos = {
   ]
 };
 
-// счётчик
-let count = 0;
+
 // текущая фигура в игре
 let tetromino = getNextTetromino();
+let nextTetromino = getNextTetromino();
 
+// счётчик
+let count = 0;
 // следим за кадрами анимации, чтобы если что — остановить игру
 let rAF = null;  
 // флаг конца игры, на старте — неактивный
@@ -92,7 +94,7 @@ function getRandomInt(min, max) {
 
 // создаём последовательность цветов, которая появится в игре
 function generateColorsList () {
-  const colorsList = ['cyan', 'yellow', 'purple', 'green', 'red', 'blue', 'orange'];
+  const colorsList = ['cyan', 'yellow', 'purple', 'green', 'red', 'blue', 'orange', 'lime'];
   while (colorsList.length) {
     // случайным образом берем цвет
     const rand = getRandomInt(0, colorsList.length - 1);
@@ -122,23 +124,22 @@ function getNextTetromino() {
   // если следующей нет — генерируем
   if (tetrominoSequence.length === 0) {
     generateSequence();
-    tetrominoColorsList = [];
+    // tetrominoColorsList = [];
+    // generateColorsList();
+  }
+
+  const name = tetrominoSequence.pop();
+  const matrix = tetrominos[name];
+  const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
+  const row = -1;
+  // const colorIndex = Math.min(tetrominoSequence.length-1, tetrominoColorsList.length-1);
+  // const color = tetrominoColorsList[colorIndex] || 'white'; // fallback
+  if (tetrominoColorsList.length === 0) {
+    // tetrominoColorsList = [];
     generateColorsList();
   }
-  // берём первую фигуру из массива
-  const name = tetrominoSequence.pop();
-  // сразу создаём матрицу, с которой мы отрисуем фигуру
-  const matrix = tetrominos[name];
+  const color = tetrominoColorsList.pop();
 
-  // I и O стартуют с середины, остальные — чуть левее
-  const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
-
-  // I начинает с 21 строки (смещение -1), а все остальные — со строки 22 (смещение -2)
-  // const row = name === 'I' ? -1 : -2;
-  const row = -1;
-
-  const color = tetrominoColorsList[tetrominoSequence.length-1];
-  // вот что возвращает функция 
   return {
     name: name,      // название фигуры (L, O, и т.д.)
     matrix: matrix,  // матрица с фигурой
@@ -149,91 +150,171 @@ function getNextTetromino() {
 }
 
 // поворачиваем матрицу на 90 градусов
-// https://codereview.stackexchange.com/a/186834
 function rotate(matrix) {
   const N = matrix.length - 1;
   const result = matrix.map((row, i) =>
     row.map((val, j) => matrix[N - j][i])
   );
-  // на входе матрица, и на выходе тоже отдаём матрицу
   return result;
 }
 
-// проверяем после появления или вращения, может ли матрица (фигура) быть в этом месте поля или она вылезет за его границы
 function isValidMove(matrix, cellRow, cellCol) {
-  // проверяем все строки и столбцы
   for (let row = 0; row < matrix.length; row++) {
     for (let col = 0; col < matrix[row].length; col++) {
-      if (matrix[row][col] && (
-          // если выходит за границы поля…
-          cellCol + col < 0 ||
-          cellCol + col >= playfield[0].length ||
-          cellRow + row >= playfield.length ||
-          // …или пересекается с другими фигурами
-          playfield[cellRow + row][cellCol + col])
-        ) {
-        // то возвращаем, что нет, так не пойдёт
-        return false;
+      if (matrix[row][col]) {
+        if (cellCol + col < 0 || 
+            cellCol + col >= playfield[0].length || 
+            cellRow + row >= playfield.length || 
+            playfield[cellRow + row][cellCol + col].name !== 0) {
+            // (cellRow + row >= 0 && playfield[cellRow + row][cellCol + col].name !== 0)) {
+          return false;
+        }
       }
     }
   }
-  // а если мы дошли до этого момента и не закончили раньше — то всё в порядке
   return true;
 }
 
-// когда фигура окончательно встала на своё место
+// проверяем после появления или вращения, может ли матрица (фигура) быть в этом месте поля или она вылезет за его границы
+// function isValidMove(matrix, cellRow, cellCol) {
+//   // проверяем все строки и столбцы
+//   for (let row = 0; row < matrix.length; row++) {
+//     for (let col = 0; col < matrix[row].length; col++) {
+//       if (matrix[row][col] && (
+//           // если выходит за границы поля…
+//           cellCol + col < 0 ||
+//           cellCol + col >= playfield[0].length ||
+//           cellRow + row >= playfield.length ||
+//           // …или пересекается с другими фигурами
+//           playfield[cellRow + row][cellCol + col])
+//         ) {
+//         // то возвращаем, что нет, так не пойдёт
+//         return false;
+//       }
+//     }
+//   }
+//   // а если мы дошли до этого момента и не закончили раньше — то всё в порядке
+//   return true;
+// }
+
+
+// когда фигура окончательна встала на своё место
 function placeTetromino() {
-  // обрабатываем все строки и столбцы в игровом поле
+  
+  // Проверяем, достигла ли фигура верха перед размещением
+  for (let row = 0; row < tetromino.matrix.length; row++) {
+    for (let col = 0; col < tetromino.matrix[row].length; col++) {
+      if (tetromino.matrix[row][col] && tetromino.row + row < 0) {
+        return showGameOver(); // Игра завершается
+      }
+    }
+  }
+
+  // Записываем текущую фигуру в игровое поле
   for (let row = 0; row < tetromino.matrix.length; row++) {
     for (let col = 0; col < tetromino.matrix[row].length; col++) {
       if (tetromino.matrix[row][col]) {
-
-        // если край фигуры после установки вылезает за границы поля, то игра закончилась
-        if (tetromino.row + row < 0) {
-          return showGameOver();
-        }
-        // если всё в порядке, то записываем в массив игрового поля нашу фигуру
+        if (tetromino.row + row < 0) return showGameOver();
+        
+        // Создаем новый объект для каждой ячейки
         playfield[tetromino.row + row][tetromino.col + col] = {
           name: tetromino.name,
           color: tetromino.color
         };
       }
-    } 
+    }
   }
 
-  // проверяем, чтобы заполненные ряды очистились снизу вверх
-  for (let row = playfield.length - 1; row >= 0; ) {
-    // если ряд заполнен
-    if (playfield[row].every(cell => !!cell)) {
-
-      // очищаем его и опускаем всё вниз на одну клетку
-      for (let r = row; r >= 0; r--) {
+  // Проверяем заполненные строки снизу вверх
+  for (let row = 19; row >= 0; row--) {
+    if (playfield[row].every(cell => cell.name !== 0)) {
+      // Удаляем заполненную строку
+      for (let r = row; r > 0; r--) {
+        // Копируем каждую ячейку отдельно, создавая новые объекты
         for (let c = 0; c < playfield[r].length; c++) {
-          playfield[r][c] = playfield[r-1][c];
+          playfield[r][c] = {
+            name: playfield[r-1][c].name,
+            color: playfield[r-1][c].color
+          };
         }
       }
+      
+      // Очищаем верхнюю строку
+      for (let c = 0; c < playfield[0].length; c++) {
+        playfield[0][c] = { name: 0, color: '' };
+      }
+      
       check.textContent = Number(check.textContent) + 10;
-    }
-    else {
-      // переходим к следующему ряду
-      row--;
+      row++; // Проверяем текущую строку снова
     }
   }
-  // получаем следующую фигуру
-  tetromino = getNextTetromino();
+
+  // Берем следующую фигуру
+  tetromino = nextTetromino;
+  nextTetromino = getNextTetromino();
+  drawNextTetromino();
 }
+
+// Функция для отрисовки следующей фигуры
+function drawNextTetromino() {
+  // Очищаем холст
+  contextNext.clearRect(0, 0, next.width, next.height);
+  
+  // Центрируем фигуру на холсте next
+  const offsetX = (next.width - nextTetromino.matrix[0].length * grid) / 2;
+  const offsetY = (next.height - nextTetromino.matrix.length * grid) / 2;
+  
+  // Устанавливаем цвет
+  contextNext.fillStyle = nextTetromino.color;
+  
+  // Отрисовываем фигуру
+  for (let row = 0; row < nextTetromino.matrix.length; row++) {
+    for (let col = 0; col < nextTetromino.matrix[row].length; col++) {
+      if (nextTetromino.matrix[row][col]) {
+        contextNext.fillRect(
+          col * grid + offsetX, 
+          row * grid + offsetY, 
+          grid-1, 
+          grid-1
+        );
+      }
+    }
+  }
+}
+
+// // показываем надпись Game Over
+// function showGameOver() {
+//   // прекращаем всю анимацию игры
+//   cancelAnimationFrame(rAF);
+//   // ставим флаг окончания
+//   gameOver = true;
+//   // рисуем чёрный прямоугольник посередине поля
+//   context.fillStyle = 'black';
+//   context.globalAlpha = 0.75;
+//   context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
+//   // пишем надпись белым моноширинным шрифтом по центру
+//   context.globalAlpha = 1;
+//   context.fillStyle = 'white';
+//   context.font = '36px monospace';
+//   context.textAlign = 'center';
+//   context.textBaseline = 'middle';
+//   context.fillText('GAME OVER!', canvas.width / 2, canvas.height / 2);
+// }
 
 // показываем надпись Game Over
 function showGameOver() {
-  // прекращаем всю анимацию игры
+  // Прекращаем анимацию
   cancelAnimationFrame(rAF);
-  // ставим флаг окончания
+  rAF = null;
+  
+  // Устанавливаем флаг окончания
   gameOver = true;
-  // рисуем чёрный прямоугольник посередине поля
+  
+  // Рисуем сообщение
   context.fillStyle = 'black';
   context.globalAlpha = 0.75;
   context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
-  // пишем надпись белым моноширинным шрифтом по центру
+  
   context.globalAlpha = 1;
   context.fillStyle = 'white';
   context.font = '36px monospace';
@@ -288,6 +369,8 @@ document.addEventListener('keydown', function(e) {
 
 // главный цикл игры
 function loop() {
+
+  if (gameOver) return; // Не продолжаем, если игра окончена
   // начинаем анимацию
   rAF = requestAnimationFrame(loop);
   // очищаем холст
@@ -305,17 +388,6 @@ function loop() {
     }
   }
 
-  contextNext.clearRect(0,0,next.width,next.height);
-
-  for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 4; col++) {
-      if (playfield[row][col]) {
-
-        // рисуем всё на один пиксель меньше, чтобы получился эффект «в клетку»
-        contextNext.fillRect(col * grid, row * grid, grid-1, grid-1);
-      }
-    }
-  }
   // рисуем текущую фигуру
   if (tetromino) {
 
@@ -330,7 +402,6 @@ function loop() {
         placeTetromino();
       }
     }
-    // let color = getNextColors();
     // не забываем про цвет текущей фигуры
     context.fillStyle = tetromino.color;
 
@@ -349,3 +420,4 @@ function loop() {
 
 // старт игры
 rAF = requestAnimationFrame(loop);
+drawNextTetromino();
