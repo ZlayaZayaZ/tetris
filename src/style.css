@@ -14,3 +14,7 @@ html, body {
     border: 1px solid white;
     background: black;
   }
+
+  .check {
+    color: white;
+  }
