@@ -9,8 +9,12 @@ const grid = 32;
 const next = document.getElementById('next');
 const contextNext = next.getContext('2d');
 
+// элементы статистики игры
 const check = document.getElementById('check');
 const record = document.getElementById('record');
+
+// элементы кнопок
+const pauseButton = document.querySelector('.pause');
 
 // массив с последовательностями фигур, на старте — пустой
 let tetrominoSequence = [];
@@ -255,22 +259,24 @@ function drawNextTetromino() {
   }
 }
 
-// // показываем надпись Game Over
-// function pause() {
-//   // прекращаем всю анимацию игры
-//   cancelAnimationFrame(rAF);
-//   // рисуем чёрный прямоугольник посередине поля
-//   context.fillStyle = 'black';
-//   context.globalAlpha = 0.75;
-//   context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
-//   // пишем надпись белым моноширинным шрифтом по центру
-//   context.globalAlpha = 1;
-//   context.fillStyle = 'white';
-//   context.font = '36px monospace';
-//   context.textAlign = 'center';
-//   context.textBaseline = 'middle';
-//   context.fillText('PAUSE', canvas.width / 2, canvas.height / 2);
-// }
+// функция обработки нажатия кнопки пауза
+function pause() {
+  // прекращаем всю анимацию игры
+  cancelAnimationFrame(rAF);
+  // рисуем чёрный прямоугольник посередине поля
+  context.fillStyle = 'black';
+  context.globalAlpha = 0.75;
+  context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
+  // пишем надпись белым моноширинным шрифтом по центру
+  context.globalAlpha = 1;
+  context.fillStyle = 'white';
+  context.font = '36px monospace';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText('PAUSE', canvas.width / 2, canvas.height / 2);
+}
+
+
 
 // показываем надпись Game Over
 function showGameOver() {
@@ -300,6 +306,9 @@ function showGameOver() {
     check.textContent = 0;
   }
 }
+
+// pauseButton.addEventListener('click', pause);
+pauseButton.onclick = pause;
 
 // следим за нажатиями на клавиши
 document.addEventListener('keydown', function(e) {
