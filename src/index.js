@@ -411,3 +411,43 @@ drawNextTetromino();
 if (localStorage.getItem("record")) {
   record.textContent = Number(localStorage.getItem("record"));
 };
+
+const buttonLight = document.querySelector(".light");
+const buttonDark = document.querySelector(".dark");
+const textCheck = document.querySelector('.textCheck');
+const body = document.querySelector('body');
+
+const arrDark = ['dark', 'canvasDark', 'checkDark', 'bodyDark'];
+const arrLight = ['light', 'canvasLight', 'checkLight', 'bodyLight'];
+
+// меняем в элементах классы из первого массива на классы из второго
+function move (arr1, arr2) {
+ localStorage.setItem("move", arr2[0]);
+
+  canvas.classList.remove(arr1[1]);
+  canvas.classList.add(arr2[1]);
+
+  textCheck.classList.remove(arr1[2]);
+  textCheck.classList.add(arr2[2]);
+
+  body.classList.remove(arr1[3]);
+  body.classList.add(arr2[3]);
+}
+
+buttonLight.addEventListener('click', () => {
+  move(arrDark, arrLight);
+  buttonDark.classList.remove('hidden');
+  buttonLight.classList.add('hidden');
+}, false)
+
+buttonDark.addEventListener('click', () => {
+  move(arrLight, arrDark);
+  buttonLight.classList.remove('hidden');
+  buttonDark.classList.add('hidden');
+}, false)
+
+if (localStorage.getItem("move") == 'light') {
+  move(arrDark, arrLight);
+  buttonDark.classList.remove('hidden');
+  buttonLight.classList.add('hidden');
+};

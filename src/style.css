@@ -1,26 +1,43 @@
 html, body {
     height: 100%;
     margin: 0;
-  }
-  /*делаем чёрный фон и выравниваем всё по центру*/
-  body {
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  /*толщина холста — 1 пиксель, белый цвет*/
-  canvas {
-    border: 1px solid white;
-    background: black;
-  }
+}
+/*делаем чёрный фон и выравниваем всё по центру*/
+.bodyDark {
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/*толщина холста — 1 пиксель, белый цвет*/
+.canvasDark {
+  border: 1px solid white;
+  background: black;
+}
 
-  .check {
-    color: white;
-  }
+.checkDark {
+  color: white;
+}
 
-  .hidden {
-    display: none;
+/*делаем белый фон и выравниваем всё по центру*/
+.bodyLight {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/*толщина холста — 1 пиксель, белый цвет*/
+.canvasLight {
+  border: 1px solid rgb(215, 96, 96);
+  background: white;
+}
+
+.checkLight {
+  color: black;
+}
+
+.hidden {
+  display: none;
 }
 
   

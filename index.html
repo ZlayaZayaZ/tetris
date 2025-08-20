@@ -4,11 +4,11 @@
   <title>Тетрис</title>
   <link rel="stylesheet" href="src/style.css">
 </head>
-<body>
+<body class="bodyDark">
   <div class="buttonAll">
     <div class="buttonMode">
-      <button class="button dark" type="button">light</button>
-      <button class="button light hidden" type="button">dark</button>
+      <button class="button light" type="button">light</button>
+      <button class="button dark hidden" type="button">dark</button>
     </div>
     <div class="buttonPause">
       <button class="pause buttonStop" type="button">pause</button> 
@@ -19,7 +19,7 @@
       <button class="button high red" data-speed="120" type="button">high</button>
     </div>
   </div>
-  <div class="check">
+  <div class="textCheck checkDark">
     <div class="checkYou checkClass">
       <div id="checkYou" class="field">now</div>
       <div class="field">:</div>
@@ -32,7 +32,7 @@
     </div>
   </div>
   <!-- рисуем поле для игры -->
-  <canvas width="320" height="640" id="game"></canvas>
+  <canvas width="320" height="640" id="game" class="canvasDark"></canvas>
   <canvas width="128" height="128" id="next"></canvas>
   <script src="src/index.js"></script>
 </body>
