@@ -15,8 +15,8 @@
       <button class="go buttonStop hidden" type="button">go</button> 
     </div>
     <div class="buttonSpeed">
-      <button class="button normal green" data-speed="180" type="button">normal</button>
-      <button class="button high red" data-speed="120" type="button">high</button>
+      <button class="button normal green" data-speed="35" type="button">normal</button>
+      <button class="button high red" data-speed="20" type="button">hard</button>
     </div>
   </div>
   <div class="textCheck checkDark">
@@ -33,7 +33,31 @@
   </div>
   <!-- рисуем поле для игры -->
   <canvas width="320" height="640" id="game" class="canvasDark"></canvas>
-  <canvas width="128" height="128" id="next"></canvas>
+  <div class="bottomGame">
+    <button class="buttonB left" type="button">left</button>
+    <button class="buttonB top" type="button">high</button>
+    <canvas class="buttonB" width="128" height="128" id="next"></canvas>
+    <button class="buttonB vniz" type="button">vniz</button>
+    <button class="buttonB right" type="button">right</button>
+  </div>
+  <div class="rules">
+    задача: ставить падающие фигуры так, чтобы образовывались полностью заполненные ряды
+    полностью заполенный ряд исчезает увеличивая счетчик очков
+    игра заканчивается, если фигура при постановке касается верхней границы поля
+
+    управление фигурами игры происходит клавишами стрелок или по кнопкам расположеным под игровым полем
+    кнопка left - сдвигает фигуру влево
+    кнопка top - поворачивает фигуру на 90 градусов
+    кнопка vniz - ускоряет падение фигуры
+    кнопка right - сдвигает фигуру вправо
+
+    кнопка move меняет цветовой режим (светлый/темный)
+    кнопка pause/go - ставит игру на паузу/снимает с паузы
+
+    В игре есть 2 скоростных режима: normal и hard
+    по-умолчанию игра стартует в режиме нормал (зеленый цыет кнопки)
+    при переключении в режим hard игра ускоряется
+  </div>
   <script src="src/index.js"></script>
 </body>
 </html>
