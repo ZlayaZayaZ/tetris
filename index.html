@@ -15,8 +15,13 @@
       <button class="go buttonStop hidden" type="button">go</button> 
     </div>
     <div class="buttonSpeed">
-      <button class="button normal green" data-speed="35" type="button">normal</button>
-      <button class="button high red" data-speed="20" type="button">hard</button>
+      <button class="buttonMinus green" type="button">reduce</button>
+      <div class="speed">
+        <div class="field">speed</div>
+        <div class="field">:</div>
+        <div class="resultRecord field" id="speed"></div>
+      </div>
+      <button class="buttonPlus red" type="button">increase</button>
     </div>
   </div>
   <div class="textCheck checkDark">
@@ -35,9 +40,9 @@
   <canvas width="320" height="640" id="game" class="canvasDark"></canvas>
   <div class="bottomGame">
     <button class="buttonB left" type="button">left</button>
-    <button class="buttonB top" type="button">high</button>
+    <button class="buttonB top" type="button">top</button>
     <canvas class="buttonB" width="128" height="128" id="next"></canvas>
-    <button class="buttonB vniz" type="button">vniz</button>
+    <button class="buttonB down" type="button">down</button>
     <button class="buttonB right" type="button">right</button>
   </div>
   <div class="rules">

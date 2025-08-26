@@ -99,7 +99,7 @@ const gameBottom = document.querySelector('.bottomGame');
 const topButton = gameBottom.querySelector('.top');
 const leftButton = gameBottom.querySelector('.left');
 const rightButton = gameBottom.querySelector('.right');
-const vnizButton = gameBottom.querySelector('.vniz');
+const downButton = gameBottom.querySelector('.down');
 
 // Функция возвращает случайное число в заданном диапазоне
 function getRandomInt(min, max) {
@@ -341,8 +341,6 @@ function showGameOver() {
   }
 }
 
-// pauseButton.addEventListener('click', pause);
-
 function topBut () {
   if (gameOver) return;
   // поворачиваем фигуру на 90 градусов
@@ -369,7 +367,7 @@ function rightBut () {
   }
 }
 
-function bottomBut () {
+function downBut () {
   if (gameOver) return;
   // смещаем фигуру на строку вниз
   const row = tetromino.row + 1;
@@ -387,7 +385,7 @@ function bottomBut () {
 topButton.onclick = topBut;
 leftButton.onclick = leftBut;
 rightButton.onclick = rightBut;
-vnizButton.onclick = bottomBut;
+downButton.onclick = downBut;
 
 // следим за нажатиями на клавиши
 document.addEventListener('keydown', function(e) {
@@ -409,7 +407,7 @@ document.addEventListener('keydown', function(e) {
 
   // стрелка вниз — ускорить падение
   if(e.which === 40) {
-    bottomBut ();
+    downBut ();
   }
 
   // клавиша пробела для паузы
@@ -421,6 +419,40 @@ document.addEventListener('keydown', function(e) {
     } 
   }
 });
+
+const dataSpeed = {
+  1: 50,
+  2: 40,
+  3: 30,
+  4: 20,
+  5: 10,
+}
+
+const minusButton = document.querySelector('.buttonMinus');
+const plusButton = document.querySelector('.buttonPlus');
+let speedDisplay = document.getElementById('speed');
+
+function minusSpeed () {
+  let speed = Number(localStorage.getItem("speed"));
+  if (speed > 1) {
+    speed--;
+    localStorage.setItem("speed", speed);
+    speedDisplay.textContent = speed;
+  }
+}
+
+function plusSpeed () {
+    let speed = Number(localStorage.getItem("speed"));
+    if (speed < 5) {
+    speed++;
+    localStorage.setItem("speed", speed);
+    speedDisplay.textContent = speed;
+  }
+}
+
+minusButton.onclick = minusSpeed;
+plusButton.onclick = plusSpeed;
+
 
 // главный цикл игры
 function loop() {
@@ -445,9 +477,14 @@ function loop() {
 
   // рисуем текущую фигуру
   if (tetromino) {
-
+    let speed = localStorage.getItem("speed");
+    if (!speed) {
+      speed = Number(document.getElementById('speed').textContent);
+      localStorage.setItem("speed", speed);
+    }
+    document.getElementById('speed').textContent = speed;
     // фигура сдвигается вниз каждые 35 кадров
-    if (++count > 35) {
+    if (++count > dataSpeed[speed]) {
       tetromino.row++;
       count = 0;
 
@@ -468,7 +505,7 @@ function loop() {
           // и снова рисуем на один пиксель меньше
           context.fillRect((tetromino.col + col) * grid, (tetromino.row + row) * grid, grid-1, grid-1);
         }
-      }
+      } 
     }
   }
 }
