@@ -91,6 +91,13 @@ let rAF = null;
 // флаг конца игры, на старте — неактивный
 let gameOver = false;
 
+// кнопки управления игрой с телефона
+const gameBottom = document.querySelector('.bottomGame');
+const topButton = gameBottom.querySelector('.top');
+const leftButton = gameBottom.querySelector('.left');
+const rightButton = gameBottom.querySelector('.right');
+const vnizButton = gameBottom.querySelector('.vniz');
+
 // Функция возвращает случайное число в заданном диапазоне
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -310,47 +317,73 @@ function showGameOver() {
 // pauseButton.addEventListener('click', pause);
 pauseButton.onclick = pause;
 
+function topBut () {
+  if (gameOver) return;
+  // поворачиваем фигуру на 90 градусов
+  const matrix = rotate(tetromino.matrix);
+  // если так ходить можно — запоминаем
+  if (isValidMove(matrix, tetromino.row, tetromino.col)) {
+    tetromino.matrix = matrix;
+  }
+}
+
+function leftBut () {
+  if (gameOver) return;
+  const col = tetromino.col - 1;
+  if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+    tetromino.col = col;
+  }
+}
+
+function rightBut () {
+  if (gameOver) return;
+  const col = tetromino.col + 1;
+  if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+    tetromino.col = col;
+  }
+}
+
+function bottomBut () {
+  if (gameOver) return;
+  // смещаем фигуру на строку вниз
+  const row = tetromino.row + 1;
+  // если опускаться больше некуда — запоминаем новое положение
+  if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
+    tetromino.row = row - 1;
+    // ставим на место и смотрим на заполненные ряды
+    placeTetromino();
+    return;
+  }
+  // запоминаем строку, куда стала фигура
+  tetromino.row = row;
+}
+
+topButton.onclick = topBut;
+leftButton.onclick = leftBut;
+rightButton.onclick = rightBut;
+vnizButton.onclick = bottomBut;
+
 // следим за нажатиями на клавиши
 document.addEventListener('keydown', function(e) {
-  // если игра закончилась — сразу выходим
-  if (gameOver) return;
 
-  // стрелки влево и вправо
-  if (e.which === 37 || e.which === 39) {
-    const col = e.which === 37
-      // если влево, то уменьшаем индекс в столбце, если вправо — увеличиваем
-      ? tetromino.col - 1
-      : tetromino.col + 1;
+  // стрелка влево
+  if (e.which === 37) {
+    leftBut ();
+  }
 
-    // если так ходить можно, то запоминаем текущее положение 
-    if (isValidMove(tetromino.matrix, tetromino.row, col)) {
-      tetromino.col = col;
-    }
+  // стрелка вправо
+  if (e.which === 39) {
+    rightBut ();
   }
 
   // стрелка вверх — поворот
   if (e.which === 38) {
-    // поворачиваем фигуру на 90 градусов
-    const matrix = rotate(tetromino.matrix);
-    // если так ходить можно — запоминаем
-    if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-      tetromino.matrix = matrix;
-    }
+    topBut ();
   }
 
   // стрелка вниз — ускорить падение
   if(e.which === 40) {
-    // смещаем фигуру на строку вниз
-    const row = tetromino.row + 1;
-    // если опускаться больше некуда — запоминаем новое положение
-    if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
-      tetromino.row = row - 1;
-      // ставим на место и смотрим на заполненные ряды
-      placeTetromino();
-      return;
-    }
-    // запоминаем строку, куда стала фигура
-    tetromino.row = row;
+    bottomBut ();
   }
 });
 
