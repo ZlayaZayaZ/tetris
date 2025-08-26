@@ -15,6 +15,7 @@ const record = document.getElementById('record');
 
 // элементы кнопок
 const pauseButton = document.querySelector('.pause');
+const goButton = document.querySelector('.go');
 
 // массив с последовательностями фигур, на старте — пустой
 let tetrominoSequence = [];
@@ -23,6 +24,8 @@ let tetrominoColorsList = [];
 // с помощью двумерного массива следим за тем, что находится в каждой клетке игрового поля
 // размер поля — 10 на 20, и несколько строк ещё находится за видимой областью
 let playfield = [];
+
+
 
 // заполняем сразу массив пустыми ячейками
 for (let row = -2; row < 20; row++) {
@@ -266,10 +269,16 @@ function drawNextTetromino() {
   }
 }
 
+// добавляем флаг для отслеживания состояния паузы
+let isPaused = false;
+
 // функция обработки нажатия кнопки пауза
-function pause() {
+function pauseGame() {
+  if (gameOver || isPaused) return;
   // прекращаем всю анимацию игры
   cancelAnimationFrame(rAF);
+  rAF = null;
+  isPaused = true;
   // рисуем чёрный прямоугольник посередине поля
   context.fillStyle = 'black';
   context.globalAlpha = 0.75;
@@ -281,9 +290,27 @@ function pause() {
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText('PAUSE', canvas.width / 2, canvas.height / 2);
+
+  // скрываем кнопку паузы и показываем кнопку продолжения
+  pauseButton.classList.add('hidden');
+  goButton.classList.remove('hidden');
 }
 
+// функция для возобновления игры
+function resumeGame() {
+  if (gameOver || !isPaused) return;
+  
+  // продолжаем игру
+  isPaused = false;
+  rAF = requestAnimationFrame(loop);
+  
+  // скрываем кнопку продолжения и показываем кнопку паузы
+  goButton.classList.add('hidden');
+  pauseButton.classList.remove('hidden');
+}
 
+pauseButton.onclick = pauseGame;
+goButton.onclick = resumeGame;
 
 // показываем надпись Game Over
 function showGameOver() {
@@ -315,7 +342,6 @@ function showGameOver() {
 }
 
 // pauseButton.addEventListener('click', pause);
-pauseButton.onclick = pause;
 
 function topBut () {
   if (gameOver) return;
@@ -384,6 +410,15 @@ document.addEventListener('keydown', function(e) {
   // стрелка вниз — ускорить падение
   if(e.which === 40) {
     bottomBut ();
+  }
+
+  // клавиша пробела для паузы
+  if (e.which === 32) {
+    if (isPaused) {
+      resumeGame();
+    } else {
+      pauseGame();
+    } 
   }
 });
 
