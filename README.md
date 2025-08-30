@@ -10,7 +10,7 @@ Script - src/index.js
 
 #### Запуск проекта
 
-```git clone https://zlayazayaz.github.io/tetris```
+```git clone https://github.com/ZlayaZayaZ/tetris```
 
 ```npm install```
 
