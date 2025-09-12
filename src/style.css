@@ -51,7 +51,9 @@ html, body {
 }
 
 .button {
-    height: 33.3%;
+    /* height: 33.3%; */
+    /* width: 50px;
+    height: 50px; */
     border: 1px solid rgb(63, 62, 62);
     color: white;
     text-align: center;
@@ -72,4 +74,36 @@ html, body {
 
 .green {
     background-color: #25c735;
+}
+
+.game {
+  position: relative; /* Делаем контейнер относительным для позиционирования дочерних элементов */
+}
+
+
+.buttonMode {
+  position: absolute; /* Абсолютное позиционирование */
+  top: 0;
+  left: 0;
+  /* top: 10px; Отступ сверху */
+  /* left: 10px; Отступ слева */
+  z-index: 10; /* Убедимся, что кнопки будут поверх canvas */
+  /* display: flex; */
+  /* gap: 10px; Расстояние между кнопками */
+}
+
+.buttonPause {
+   z-index: 10;
+   position: absolute;
+   top: 0;
+   right: 0;
+}
+
+.buttonMode, .buttonPause {
+  pointer-events: auto; /* Разрешаем клики по кнопкам */
+  opacity: 0.5;
+}
+
+.light, .dark {
+  width: 20%;
 }

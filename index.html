@@ -6,14 +6,6 @@
 </head>
 <body class="bodyDark">
   <div class="buttonAll">
-    <div class="buttonMode">
-      <button class="button light" type="button">light</button>
-      <button class="button dark hidden" type="button">dark</button>
-    </div>
-    <div class="buttonPause">
-      <button class="pause buttonStop" type="button">pause</button> 
-      <button class="go buttonStop hidden" type="button">go</button> 
-    </div>
     <div class="buttonSpeed">
       <button class="buttonMinus green" type="button">reduce</button>
       <div class="speed">
@@ -36,14 +28,28 @@
         <div class="resultRecord field" id="record">0</div>
     </div>
   </div>
-  <!-- рисуем поле для игры -->
-  <canvas width="320" height="640" id="game" class="canvasDark"></canvas>
-  <div class="bottomGame">
-    <button class="buttonB left" type="button">left</button>
-    <button class="buttonB top" type="button">top</button>
-    <canvas class="buttonB" width="128" height="128" id="next"></canvas>
-    <button class="buttonB down" type="button">down</button>
-    <button class="buttonB right" type="button">right</button>
+  <div class="game">
+    <div class="buttonMode">
+      <button class="button light" type="button">
+        <img src="src/svg/moon.svg" alt="">
+      </button>
+      <button class="button dark hidden" type="button">
+        <img src="src/svg/sun.svg" alt="">
+      </button>
+    </div>
+    <div class="buttonPause">
+      <button class="pause buttonStop" type="button">pause</button> 
+      <button class="go buttonStop hidden" type="button">go</button> 
+    </div>
+    <!-- рисуем поле для игры -->
+    <canvas width="320" height="640" id="game" class="canvasDark"></canvas>
+    <div class="bottomGame">
+      <button class="buttonB left" type="button">left</button>
+      <button class="buttonB top" type="button">top</button>
+      <canvas class="buttonB" width="128" height="128" id="next"></canvas>
+      <button class="buttonB down" type="button">down</button>
+      <button class="buttonB right" type="button">right</button>
+    </div>
   </div>
   <div class="rules">
     задача: ставить падающие фигуры так, чтобы образовывались полностью заполненные ряды
